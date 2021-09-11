@@ -145,7 +145,7 @@ struct ContentView: View {
                                     Text("\(entry.weather.pressure.formatted()) mbar")
                                 }
                                 .foregroundStyle(.secondary)
-                                .font(.body.monospacedDigit())
+                                .font(.caption.monospacedDigit())
                             }
                         }
                     }
