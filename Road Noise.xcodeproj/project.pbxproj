@@ -11,6 +11,8 @@
 		4B7D22A426ED188A00B107A0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D22A326ED188A00B107A0 /* ContentView.swift */; };
 		4B7D22A626ED188C00B107A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B7D22A526ED188C00B107A0 /* Assets.xcassets */; };
 		4B7D22A926ED188C00B107A0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B7D22A826ED188C00B107A0 /* Preview Assets.xcassets */; };
+		4B7D22B026ED76EF00B107A0 /* NoiseEntryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D22AF26ED76EF00B107A0 /* NoiseEntryManager.swift */; };
+		4B7D22B226ED7C9E00B107A0 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D22B126ED7C9E00B107A0 /* ViewState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		4B7D22A326ED188A00B107A0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4B7D22A526ED188C00B107A0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B7D22A826ED188C00B107A0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B7D22AF26ED76EF00B107A0 /* NoiseEntryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseEntryManager.swift; sourceTree = "<group>"; };
+		4B7D22B126ED7C9E00B107A0 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +57,8 @@
 			children = (
 				4B7D22A126ED188A00B107A0 /* Road_NoiseApp.swift */,
 				4B7D22A326ED188A00B107A0 /* ContentView.swift */,
+				4B7D22AF26ED76EF00B107A0 /* NoiseEntryManager.swift */,
+				4B7D22B126ED7C9E00B107A0 /* ViewState.swift */,
 				4B7D22A526ED188C00B107A0 /* Assets.xcassets */,
 				4B7D22A726ED188C00B107A0 /* Preview Content */,
 			);
@@ -137,7 +143,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B7D22B026ED76EF00B107A0 /* NoiseEntryManager.swift in Sources */,
 				4B7D22A426ED188A00B107A0 /* ContentView.swift in Sources */,
+				4B7D22B226ED7C9E00B107A0 /* ViewState.swift in Sources */,
 				4B7D22A226ED188A00B107A0 /* Road_NoiseApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

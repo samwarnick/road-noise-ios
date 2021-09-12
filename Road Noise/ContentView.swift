@@ -77,29 +77,11 @@ struct NoiseEntry: Identifiable, Codable {
 struct ContentView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("key") var key: String = ""
+    @EnvironmentObject() var manager: NoiseEntryManager
+    @EnvironmentObject() var viewState: ViewState
     
-    @State private var noiseEntries: [NoiseEntry] = []
-    private var groupedNoiseEntries: [Date: [NoiseEntry]] {
-        let grouped = Dictionary(grouping: noiseEntries) { (noiseEntry) -> Date in
-            let calendar = Calendar.current
-            let dateComponents = calendar.dateComponents([.year, .month, .day], from: noiseEntry.date)
-            let date = calendar.date(from: dateComponents)!
-            return date
-        }
-        return grouped
-    }
     @State private var keyIsPresented = false
     @State private var presentNoiseLevel = false
-    
-    private var decoder: JSONDecoder {
-        let decoder = JSONDecoder()
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
-        return decoder
-    }
     
     var body: some View {
         TabView {
@@ -112,10 +94,11 @@ struct ContentView: View {
                                 keyIsPresented = false
                             }
                         }
+                        .buttonStyle(.bordered)
                     }
                 }
                 
-                ForEach(groupedNoiseEntries.sorted(by: \.key), id: \.key) { date, noiseEntries in
+                ForEach(manager.groupedNoiseEntries.sorted(by: \.key), id: \.key) { date, noiseEntries in
                     Section(date.formatted(date: .long, time: .omitted)) {
                         ForEach(noiseEntries) { entry in
                             VStack(alignment: .leading, spacing: 10) {
@@ -157,15 +140,15 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Button {
-                        presentNoiseLevel = true
+                        viewState.presentNoiseLevel = true
                     } label: {
                         Label("Add New", systemImage: "plus.square")
                     }
-                    .confirmationDialog("How is the road noise?", isPresented: $presentNoiseLevel, titleVisibility: .visible) {
+                    .confirmationDialog("How is the road noise?", isPresented: $viewState.presentNoiseLevel, titleVisibility: .visible) {
                         ForEach(NoiseLevel.allCases) { level in
                             Button(level.label) {
                                 Task {
-                                    await postNewNoiseEntry(level: level.rawValue)
+                                    await manager.postNewNoiseEntry(level: level.rawValue)
                                 }
                             }
                         }
@@ -181,33 +164,10 @@ struct ContentView: View {
             }
         }
         .task {
-            noiseEntries = (try? await loadNoiseEntries()) ?? []
+            await manager.loadNoiseEntries()
         }
         .refreshable {
-            noiseEntries = (try? await loadNoiseEntries()) ?? []
-        }
-    }
-    
-    private func loadNoiseEntries() async throws -> [NoiseEntry] {
-        let url = URL(string: "https://road-noise.samwarnick.com")!
-        let (data, _) = try await URLSession.shared.data(from: url)
-        return try decoder.decode([NoiseEntry].self, from: data).sorted(by: \.date)
-    }
-    
-    private func postNewNoiseEntry(level: Int) async {
-        let url = URL(string: "https://road-noise.samwarnick.com")!
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
-        request.httpBody = level.formatted().data(using: .utf8)
-        request.httpMethod = "POST"
-        
-        
-        if let (data, _) = try? await URLSession.shared.data(for: request) {
-            if let newNoiseEntry = try? decoder.decode(NoiseEntry.self, from: data) {
-                withAnimation {
-                    noiseEntries.insert(newNoiseEntry, at: 0)
-                }
-            }
+            await manager.loadNoiseEntries()
         }
     }
     
