@@ -84,7 +84,7 @@ struct ContentView: View {
     @State private var presentNoiseLevel = false
     
     var body: some View {
-        TabView {
+        ZStack(alignment: .bottom) {
             List {
                 if keyIsPresented {
                     HStack {
@@ -134,32 +134,36 @@ struct ContentView: View {
                     }
                 }
             }
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                HStack {
-                    Spacer()
-                    Button {
-                        viewState.presentNoiseLevel = true
-                    } label: {
-                        Label("Add New", systemImage: "plus.square")
-                    }
-                    .confirmationDialog("How is the road noise?", isPresented: $viewState.presentNoiseLevel, titleVisibility: .visible) {
-                        ForEach(NoiseLevel.allCases) { level in
-                            Button(level.label) {
-                                Task {
-                                    await manager.postNewNoiseEntry(level: level.rawValue)
-                                }
+            HStack {
+                Spacer()
+                Button {
+                    viewState.presentNoiseLevel = true
+                } label: {
+                    Label("Add New", systemImage: "speaker.wave.2.fill")
+                    .font(.body.bold())
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color(UIColor.systemBackground))
+                        .shadow(radius: 2)
+                )
+                .buttonStyle(.bordered)
+                .confirmationDialog("How is the road noise?", isPresented: $viewState.presentNoiseLevel, titleVisibility: .visible) {
+                    ForEach(NoiseLevel.allCases) { level in
+                        Button(level.label) {
+                            Task {
+                                await manager.postNewNoiseEntry(level: level.rawValue)
                             }
                         }
                     }
-                    Spacer()
                 }
-                .contentShape(Rectangle())
-                .onLongPressGesture {
-                    withAnimation {
-                        keyIsPresented = true
-                    }
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .padding(.bottom)
+            .onLongPressGesture {
+                withAnimation {
+                    keyIsPresented = true
                 }
             }
         }
