@@ -39,8 +39,12 @@ class NoiseEntryManager: ObservableObject {
     
     func loadNoiseEntries() async {
         let url = URL(string: "https://road-noise.samwarnick.com")!
-        if let (data, _) = try? await URLSession.shared.data(from: url) {
-            noiseEntries = (try? decoder.decode([NoiseEntry].self, from: data).sorted(by: \.date)) ?? []
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            noiseEntries = try decoder.decode([NoiseEntry].self, from: data).sorted(by: \.date)
+        } catch {
+            print(error)
+            noiseEntries = []
         }
     }
     

@@ -59,7 +59,7 @@ struct Wind: Codable {
 
 struct Rain: Codable {
     var lastHour: Double
-    var last3Hours: Double
+    var last3Hours: Double?
 }
 
 struct Condition: Codable {
@@ -103,15 +103,21 @@ struct ContentView: View {
                         ForEach(noiseEntries) { entry in
                             VStack(alignment: .leading, spacing: 10) {
                                 HStack {
-                                    Text(entry.date.formatted(date: .omitted, time: .shortened))
-                                    Image(systemName: getWeatherSystemName(category: entry.weather.condition.category))
-                                        .renderingMode(.original)
+                                    ZStack(alignment: .leading) {
+                                        Text("00:00 PM")
+                                            .opacity(0)
+                                            .accessibility(hidden: true)
+                                        Text(entry.date.formatted(date: .omitted, time: .shortened))
+                                    }
+                                    Image(systemName: getWeatherSystemName(category: entry.weather.condition.category, clouds: entry.weather.clouds))
+                                        .symbolRenderingMode(.hierarchical)
+                                        .foregroundStyle(.secondary)
                                     Spacer()
                                     Text(entry.noiseLevel.rawValue.formatted())
                                         .foregroundColor(.white)
-                                        .padding(.horizontal)
+                                        .padding(.horizontal, 6)
                                         .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(entry.noiseLevel.color))
-                                }
+                                    }
                                 .font(.system(.title2, design: .rounded).monospacedDigit())
                                 HStack {
                                     Image(systemName: "thermometer")
@@ -127,6 +133,7 @@ struct ContentView: View {
                                         .foregroundColor(.purple)
                                     Text("\(entry.weather.pressure.formatted()) mbar")
                                 }
+                                .padding(.bottom, 4)
                                 .foregroundStyle(.secondary)
                                 .font(.caption.monospacedDigit())
                             }
@@ -142,11 +149,7 @@ struct ContentView: View {
                     Label("Add New", systemImage: "speaker.wave.2.fill")
                     .font(.body.bold())
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(Color(UIColor.systemBackground))
-                        .shadow(radius: 2)
-                )
+                .background(.regularMaterial)
                 .buttonStyle(.bordered)
                 .confirmationDialog("How is the road noise?", isPresented: $viewState.presentNoiseLevel, titleVisibility: .visible) {
                     ForEach(NoiseLevel.allCases) { level in
@@ -175,20 +178,33 @@ struct ContentView: View {
         }
     }
     
-    private func getWeatherSystemName(category: String) -> String {
+    private func getWeatherSystemName(category: String, clouds: Double) -> String {
+        print(clouds)
         switch category {
             case "Thunderstorm":
-                return "cloud.bolt.rain.fill"
+                return "cloud.bolt.rain"
             case "Drizzle":
-                return "cloud.drizzle.fill"
+                return "cloud.drizzle"
             case "Rain":
-                return "cloud.rain.fill"
+                if clouds < 50.0 {
+                    return "cloud.sun.rain"
+                } else {
+                    return "cloud.rain"
+                }
             case "Snow":
-                return "cloud.snow.fill"
+                return "cloud.snow"
             case "Clouds":
-                return "cloud.fill"
+                if clouds < 50.0 {
+                    return "cloud.sun"
+                } else {
+                    return "cloud"
+                }
+            case "Mist", "Fog":
+                return "cloud.fog"
+            case "Haze":
+                return "sun.haze"
             default:
-                return "sun.max.fill"
+                return "sun.max"
         }
     }
 }
