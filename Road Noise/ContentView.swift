@@ -179,7 +179,6 @@ struct ContentView: View {
     }
     
     private func getWeatherSystemName(category: String, clouds: Double) -> String {
-        print(clouds)
         switch category {
             case "Thunderstorm":
                 return "cloud.bolt.rain"
