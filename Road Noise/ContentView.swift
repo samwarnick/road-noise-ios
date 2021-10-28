@@ -207,6 +207,13 @@ struct Settings: View {
     @AppStorage("key") var key: String = ""
     
     @State private var notifications: [UNNotificationRequest] = []
+    private var sortedNotifications: [UNNotificationRequest] {
+        notifications.sorted {
+            let a = Calendar.current.date(from: ($0.trigger as! UNCalendarNotificationTrigger).dateComponents)!
+            let b = Calendar.current.date(from: ($1.trigger as! UNCalendarNotificationTrigger).dateComponents)!
+            return a < b
+        }
+    }
     @State private var newNotificationTime = Date()
     
     private var formatter: DateComponentsFormatter {
@@ -227,7 +234,9 @@ struct Settings: View {
                         if let index = indexSet.first {
                             let notification = notifications[index]
                             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notification.identifier])
-                            notifications.remove(at: index)
+                            withAnimation {
+                                notifications.remove(at: index)
+                            }
                         }
                     }
                     HStack {
@@ -251,6 +260,9 @@ struct Settings: View {
                             
                             let request = UNNotificationRequest(identifier: "com.samwarnick.Road_Noise.id.\(UUID().uuidString)", content: content, trigger: trigger)
                             center.add(request)
+                            withAnimation {
+                                notifications.append(request)
+                            }
                         } label: {
                             Text("Add")
                         }
