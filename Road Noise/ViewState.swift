@@ -9,4 +9,5 @@ import SwiftUI
 
 class ViewState: ObservableObject {
     @Published var presentNoiseLevel = false
+    @Published var presentSettings = false
 }

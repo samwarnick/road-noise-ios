@@ -38,23 +38,6 @@ struct Road_NoiseApp: App {
             if settings.authorizationStatus != .authorized {
                 center.requestAuthorization(options: [.alert]) { granted, error in
                     if granted {
-                        let actions = NoiseLevel.allCases.map {
-                            UNNotificationAction(identifier: $0.rawValue.formatted(), title: $0.label, options: [])
-                        }
-                        let category = UNNotificationCategory(identifier: "REQUEST_NOISE_LEVEL", actions: actions, intentIdentifiers: [], options: [])
-                        center.setNotificationCategories([category])
-                        
-                        [DateComponents(hour: 7), DateComponents(hour: 13), DateComponents(hour: 21)].forEach {
-                            let content = UNMutableNotificationContent()
-                            content.title = "How's the road noise?"
-                            content.sound = UNNotificationSound.default
-                            content.categoryIdentifier = "REQUEST_NOISE_LEVEL"
-                            
-                            let trigger = UNCalendarNotificationTrigger(dateMatching: $0, repeats: true)
-                            
-                            let request = UNNotificationRequest(identifier: "com.samwarnick.Road_Noise.id", content: content, trigger: trigger)
-                            center.add(request)
-                        }
                     }
                 }
             }
